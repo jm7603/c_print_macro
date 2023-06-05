@@ -1,10 +1,12 @@
-#ifndef IO_UTILS_H_
-#define IO_UTILS_H_
+#ifndef OUTPUT_H_
+#define OUTPUT_H_
 
 #include <errno.h>
 #include <limits.h>
 #include <stdio.h>
 #include <string.h>
+
+#include "color.h"
 
 void PrintBinary(unsigned int value);
 
@@ -32,11 +34,27 @@ void PrintBinary(unsigned int value);
 #define PRINT_DOUBLE(double_value) PRINTLNF(#double_value ": %g", double_value)
 #define PRINT_STRING(string_value) PRINTLNF(#string_value ": %s", string_value)
 
+/* colored output */
+#define PRINTF_COLOR(bg, fg, format, ...) \
+  {                                       \
+    SET_CONSOLE_TEXT_COLOR(bg, fg);       \
+    printf(format, ##__VA_ARGS__);        \
+    RESET_CONSOLE_TEXT_COLOR();           \
+  }
+
+#define PRINTLNF_COLOR(bg, fg, format, ...) \
+  {                                         \
+    SET_CONSOLE_TEXT_COLOR(bg, fg);         \
+    PRINTLNF(format, ##__VA_ARGS__);        \
+    RESET_CONSOLE_TEXT_COLOR();             \
+  }
+
 #define PRINT_ARRAY(format, array, length)                       \
   {                                                              \
     int array_index;                                             \
     for (array_index = 0; array_index < length; ++array_index) { \
-      printf(format, array[array_index]);                        \
+      printf(format, array[array_index],                         \
+              array_index == length - 1 ? '\0' : ',');           \
     };                                                           \
     printf("\n");                                                \
   }
@@ -49,9 +67,9 @@ void PrintBinary(unsigned int value);
     }                                           \
   }
 
-#define PRINT_INT_ARRAY(array, length) PRINT_ARRAY("%d, ", array, length)
-#define PRINT_CHAR_ARRAY(array, length) PRINT_ARRAY("%c, ", array, length)
-#define PRINT_DOUBLE_ARRAY(array, length) PRINT_ARRAY("%g, ", array, length)
+#define PRINT_INT_ARRAY(array, length) PRINT_ARRAY("%d%c ", array, length)
+#define PRINT_CHAR_ARRAY(array, length) PRINT_ARRAY("%c%c ", array, length)
+#define PRINT_DOUBLE_ARRAY(array, length) PRINT_ARRAY("%g%c ", array, length)
 
 #define PRINT_IF_ERROR(format, ...)             \
   if (errno != 0) {                             \
@@ -59,4 +77,4 @@ void PrintBinary(unsigned int value);
     fprintf(stderr, ": %s\n", strerror(errno)); \
   }
 
-#endif  // IO_UTILS_H_
+#endif //OUTPUT_H_
