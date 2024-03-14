@@ -36,40 +36,39 @@ void PrintBinary(unsigned int value);
 
 /* colored output */
 #define PRINTF_COLOR(bg, fg, format, ...) \
-  {                                       \
+  do {                                       \
     SET_CONSOLE_TEXT_COLOR(bg, fg);       \
     printf(format, ##__VA_ARGS__);        \
     RESET_CONSOLE_TEXT_COLOR();           \
-  }
+  } while(0)
 
 #define PRINTLNF_COLOR(bg, fg, format, ...) \
-  {                                         \
+  do {                                         \
     SET_CONSOLE_TEXT_COLOR(bg, fg);         \
     PRINTLNF(format, ##__VA_ARGS__);        \
     RESET_CONSOLE_TEXT_COLOR();             \
-  }
+  } while(0)
 
 #define PRINT_ARRAY(format, array, length)                       \
-  {                                                              \
+  do {                                                              \
     int array_index;                                             \
     for (array_index = 0; array_index < length; ++array_index) { \
       printf(format, array[array_index],                         \
-              array_index == length - 1 ? '\0' : ',');           \
-    };                                                           \
-    printf("\n");                                                \
-  }
+              array_index == length - 1 ? '\n' : ',');           \
+    }                                                           \
+  } while(0)
 
 #define PRINT_INT_ARRAY_LN(array, length)       \
-  {                                             \
+  do {                                             \
     int i;                                      \
     for (i = 0; i < length; ++i) {              \
       PRINTLNF(#array "[%d]: %d", i, array[i]); \
     }                                           \
-  }
+  } while(0)
 
-#define PRINT_INT_ARRAY(array, length) PRINT_ARRAY("%d%c ", array, length)
-#define PRINT_CHAR_ARRAY(array, length) PRINT_ARRAY("%c%c ", array, length)
-#define PRINT_DOUBLE_ARRAY(array, length) PRINT_ARRAY("%g%c ", array, length)
+#define PRINT_INT_ARRAY(array, length) PRINT_ARRAY("%d%c", array, length)
+#define PRINT_CHAR_ARRAY(array, length) PRINT_ARRAY("%c%c", array, length)
+#define PRINT_DOUBLE_ARRAY(array, length) PRINT_ARRAY("%g%c", array, length)
 
 #define PRINT_IF_ERROR(format, ...)             \
   if (errno != 0) {                             \
